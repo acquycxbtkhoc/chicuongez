@@ -1,0 +1,152 @@
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: #fefcff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 10px;
+}
+
+.player-container {
+  border: 2px solid #dcb9d3;
+  border-radius: 20px;
+  padding: 15px;
+  background: white;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  width: 100%;
+  max-width: 400px;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.image-preview img {
+  width: 300px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  border: 1px solid #ebd2ed;
+  display: block;
+}
+
+.player {
+  background: #fcf6fc;
+  border: 2px solid #ebd2ed;
+  padding: 15px;
+  border-radius: 15px;
+  width: 80%;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.song-info .title {
+  font-weight: bold;
+  font-size: 18px;
+  color: #602f6b;
+}
+
+.song-info .artist {
+  font-size: 14px;
+  color: #a37ea0;
+  margin-bottom: 15px;
+}
+
+#progress {
+  width: 100%;
+  margin: 10px 0;
+}
+
+.time-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #888;
+}
+
+.controls {
+  margin: 10px 0;
+}
+
+.controls button {
+  background: none;
+  border: none;
+  font-size: 24px;
+  margin: 0 10px;
+  cursor: pointer;
+  color: #734f7f;
+}
+
+.like button {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #d48db6;
+  cursor: pointer;
+}
+
+.sidebar {
+  width: 100%;
+  color: #934d92;
+  padding-top: 10px;
+}
+
+.sidebar h2 {
+  font-size: 24px;
+  margin: 0 0 5px;
+}
+
+.sidebar p {
+  font-size: 14px;
+  margin: 0 0 15px;
+}
+
+#playlist {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+#playlist li {
+  padding: 8px;
+  cursor: pointer;
+  border-radius: 5px;
+  margin-bottom: 5px;
+}
+
+#playlist li:hover {
+  background: #f0e5f5;
+}
+
+#playlist li.active {
+  background: #d7b3d7;
+  font-weight: bold;
+}
+
+/* Media query for larger phones in landscape */
+@media (min-width: 480px) and (max-height: 480px) {
+  .player-container {
+    max-width: 90%;
+  }
+  
+  .main {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .image-preview {
+    margin-right: 15px;
+  }
+  
+  .player, .sidebar {
+    width: 45%;
+  }
+}

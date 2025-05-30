@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Playlist</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .letter-popup {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.7);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    
+    .letter-content {
+      background-color: white;
+      padding: 20px;
+      border-radius: 15px;
+      width: 80%;
+      max-width: 500px;
+      max-height: 80vh;
+      overflow-y: auto;
+      text-align: center;
+    }
+    
+    .letter-text {
+      margin-bottom: 20px;
+      line-height: 1.6;
+      color: #602f6b;
+    }
+    
+    .next-button {
+      background-color: #d7b3d7;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 20px;
+      color: #602f6b;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .next-button:hover {
+      background-color: #c094c0;
+    }
+  </style>
+</head>
+<body>
+  <div class="letter-popup" id="letterPopup">
+    <div class="letter-content">
+      <div class="letter-text">
+        <h2>1/6 vui veeeee</h2>
+        <p>Chắc em bt rồi, tớ khá là dốt văn, tán gái thì ngu mà vẫn yêu đc em:]] nhma tớ hay nghe nhạc nên tớ muốn nói yêu em qua nhạc á(sến vl)</p>
+        <p>Nói hơi nhiều roi nhma tớ yêu nụ cười của em, yêu đôi mắt của em, tính cách của em, yêu sự quan tâm mà em dành cho anh, cx muốn thấy dáng vẻ dyeu của em khi ở với tớ:Đ. Nói chung là tớ yêu vẻ tích cực của em lắm</p>
+        <p>Hoi giờ thì nghe nhạc vui vẻ:]]] khum nghe cũm đc</p>
+        <p>Yêu emmmmmmmmmm</p>
+      </div>
+      <button class="next-button" id="nextButton">Next</button>
+    </div>
+  </div>
+
+  <div class="player-container">
+    <div class="main">
+      <div class="image-preview">
+        <img id="cover" src="AlbumCover.jpg" alt="Album Cover" onerror="this.src='https://i.pinimg.com/736x/07/25/27/072527c5fb0a4de4588bf7ab2704a3b8.jpg'"/>
+      </div>
+
+      <div class="player">
+        <div class="song-info">
+          <div class="title" id="title">Title</div>
+          <div class="artist" id="artist">Artist</div>
+        </div>
+
+        <audio id="audio-player"></audio>
+
+        <input type="range" id="progress" value="0" max="100"/>
+
+        <div class="time-info">
+          <span id="current-time">0:00</span>
+          <span id="duration">0:00</span>
+        </div>
+
+        <div class="controls">
+          <button id="prev">&#9664;&#9664;</button>
+          <button id="play">&#9654;</button>
+          <button id="next">&#9654;&#9654;</button>
+        </div>
+
+        <div class="like">
+          <button>&#9825;</button>
+        </div>
+      </div>
+      
+      <div class="sidebar">
+        <h2>Playlist</h2>
+        <p>Những bài hát làm anh nhớ đến emmmmmmmm</p>
+        <ul id="playlist">
+          <!-- Playlist items injected by JS -->
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Letter popup functionality
+    document.getElementById('nextButton').addEventListener('click', function() {
+      document.getElementById('letterPopup').style.display = 'none';
+    });
+    
+    const songs = [
+      { title: 'Từng Ngày Yêu Em', artist: 'buitruonglinh', src: 'songs/song1.mp3', img: 'AlbumCover.jpg' },
+      { title: 'Confident', artist: 'Justin Bieber', src: 'songs/song2.mp3', img: 'AlbumCover.jpg' },
+      { title: 'LOVE', artist: 'Kendrick Lamar ft.Zacari', src: 'songs/song3.mp3', img: 'AlbumCover.jpg' },
+      { title: 'Party 4 U', artist: 'Charli xcx', src: 'songs/song4.mp3', img: 'AlbumCover.jpg' },
+      { title: 'Perfect', artist: 'Shiki', src: 'songs/song5.mp3', img: 'AlbumCover.jpg' },
+      { title: 'Thinkin Bout U', artist: 'Frank Ocean', src: 'songs/song6.mp3', img: 'AlbumCover.jpg' },
+      { title: 'Rizzpacito B)', artist: 'Justin Bieber', src: 'songs/song7.mp3', img: 'AlbumCover.jpg' }
+    ];
+
+    // Select elements
+    const audio = document.getElementById('audio-player');
+    const titleEl = document.getElementById('title');
+    const artistEl = document.getElementById('artist');
+    const coverEl = document.getElementById('cover');
+    const progressEl = document.getElementById('progress');
+    const currentTimeEl = document.getElementById('current-time');
+    const durationEl = document.getElementById('duration');
+    const playBtn = document.getElementById('play');
+    const prevBtn = document.getElementById('prev');
+    const nextBtn = document.getElementById('next');
+    const playlistEl = document.getElementById('playlist');
+
+    let currentIndex = 0;
+    let isPlaying = false;
+
+    // Load song
+    function loadSong(index) {
+      const song = songs[index];
+      titleEl.textContent = song.title;
+      artistEl.textContent = song.artist;
+      coverEl.src = song.img;
+      audio.src = song.src;
+      updatePlaylistUI();
+    }
+
+    // Play / Pause
+    function playSong() {
+      audio.play().catch(e => console.error("Không thể phát nhạc:", e));
+      isPlaying = true;
+      playBtn.textContent = '❚❚';
+    }
+    function pauseSong() {
+      audio.pause();
+      isPlaying = false;
+      playBtn.textContent = '▶';
+    }
+    playBtn.addEventListener('click', () => {
+      isPlaying ? pauseSong() : playSong();
+    });
+
+    // Previous / Next
+    prevBtn.addEventListener('click', () => {
+      currentIndex = (currentIndex - 1 + songs.length) % songs.length;
+      loadSong(currentIndex);
+      playSong();
+    });
+    nextBtn.addEventListener('click', () => {
+      currentIndex = (currentIndex + 1) % songs.length;
+      loadSong(currentIndex);
+      playSong();
+    });
+
+    // Update progress
+    audio.addEventListener('timeupdate', () => {
+      const { currentTime, duration } = audio;
+      progressEl.value = (currentTime / duration) * 100 || 0;
+      currentTimeEl.textContent = formatTime(currentTime);
+      durationEl.textContent = formatTime(duration);
+    });
+    progressEl.addEventListener('input', () => {
+      audio.currentTime = (progressEl.value / 100) * audio.duration;
+    });
+
+    // Utility to format time
+    function formatTime(sec) {
+      const minutes = Math.floor(sec / 60) || 0;
+      const seconds = Math.floor(sec % 60) || 0;
+      return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+    }
+
+    // Playlist UI
+    function updatePlaylistUI() {
+      playlistEl.innerHTML = songs.map((s, i) => 
+        `<li class="${i === currentIndex ? 'active' : ''}" data-index="${i}">${s.title}</li>`
+      ).join('');
+      document.querySelectorAll('#playlist li').forEach(item => {
+        item.addEventListener('click', () => {
+          currentIndex = Number(item.getAttribute('data-index'));
+          loadSong(currentIndex);
+          playSong();
+        });
+      });
+    }
+
+    // Initialize the player with the first song
+    loadSong(currentIndex);
+    
+    // Add event listener for when audio is loaded
+    audio.addEventListener('loadeddata', () => {
+      durationEl.textContent = formatTime(audio.duration);
+    });
+  </script>
+</body>
+</html>
